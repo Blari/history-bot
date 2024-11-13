@@ -1,5 +1,5 @@
 import TelegramBot from 'node-telegram-bot-api';
-import {addMessage, checkingStatus, createThread, getMessagesList, runAssistant} from './assistant.js';
+import {addMessage, checkingStatus, findOrCreateThread, getMessagesList, runAssistant} from './assistant.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -8,16 +8,23 @@ const telegramToken = process.env.TELEGRAM_TOKEN;
 
 const bot = new TelegramBot(telegramToken, { polling: true });
 
+let treadId;
 bot.onText(/\/start/, (msg) => {
-    bot.sendMessage(msg.chat.id, "Привет! Я бот, созданный для помощи с историей. Задайте ваш вопрос!");
+    bot.sendMessage(msg.chat.id, "Привет! Я постараюсь ответить на ваши вопросы касающиеся истории поселка " +
+      "Октябрьский Смолевичского района и деревни Плисса. Задайте ваш вопрос!");
 });
 
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
 
     if (msg.text && !msg.text.startsWith('/start')) {
+        console.log("treadId: ", treadId);
         try {
-            const thread = await createThread();
+            await bot.sendMessage(chatId, "Ваш запрос в обработке. Это может занять несколько секунд...");
+
+            let thread = await findOrCreateThread(treadId);
+            treadId = thread.id;
+            
             await addMessage(thread.id, msg.text);
             const run = await runAssistant(thread.id);
 

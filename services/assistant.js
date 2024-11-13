@@ -19,6 +19,20 @@ async function createThread() {
   return thread;
 }
 
+async function findOrCreateThread(treadId) {
+  let thread;
+
+  if (treadId) {
+    thread = await openai.beta.threads.retrieve(treadId);
+  }
+
+  if (!thread) {
+      thread = await createThread();
+  }
+
+  return thread;
+}
+
 async function addMessage(threadId, message) {
   console.log("Adding a new message to thread: " + threadId);
   const response = await openai.beta.threads.messages.create(threadId, {
@@ -73,4 +87,4 @@ async function getMessagesList(threadId) {
   return messages;
 }
 
-export { createThread, addMessage, runAssistant, checkingStatus, getMessagesList }
+export { createThread, addMessage, runAssistant, checkingStatus, getMessagesList, findOrCreateThread }
