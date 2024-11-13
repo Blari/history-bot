@@ -1,11 +1,10 @@
 import TelegramBot from 'node-telegram-bot-api';
 import {addMessage, checkingStatus, createThread, getMessagesList, runAssistant} from './assistant.js';
+import dotenv from 'dotenv';
 
-require('dotenv').config();
+dotenv.config();
 
 const telegramToken = process.env.TELEGRAM_TOKEN;
-const openaiApiKey = process.env.OPENAI_API_KEY;
-const assistantId = process.env.ASSISTANT_ID;
 
 const bot = new TelegramBot(telegramToken, { polling: true });
 
