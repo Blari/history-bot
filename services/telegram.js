@@ -19,6 +19,7 @@ bot.on('message', async (msg) => {
 
     if (msg.text && !msg.text.startsWith('/start')) {
         console.log("treadId: ", treadId);
+        console.log("msg: ", msg.text);
         try {
             await bot.sendMessage(chatId, "Ваш запрос в обработке. Это может занять несколько секунд...");
 
@@ -32,8 +33,6 @@ bot.on('message', async (msg) => {
             while (status !== "completed") {
                 const runObject = await checkingStatus(thread.id, run.id);
                 status = runObject.status;
-                console.log(status);
-
                 await new Promise(resolve => setTimeout(resolve, 1000));
             }
 
@@ -43,6 +42,7 @@ bot.on('message', async (msg) => {
 
 
             if (messages.length > 0) {
+                console.log("Ответ: ", messages);
                 await bot.sendMessage(chatId, messages);
             } else {
                 await bot.sendMessage(chatId, "Не удалось получить значимую информацию из сервиса.");
